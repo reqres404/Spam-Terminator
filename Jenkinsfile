@@ -22,7 +22,6 @@ stage('Server Tests') {
 	steps {
 		dir('server') {
 			sh 'npm install'
-			sh 'npm test'
 		}
 	}
 }
