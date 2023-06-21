@@ -28,7 +28,7 @@ stage('Server Tests') {
 
 stage('Build Images') {
 	steps {
-		sh 'docker build -t dittyapatil1818/spam-terminator-jenkins:client client'
+		sh 'docker build -t adittyapatil1818/spam-terminator-jenkins:client client'
 		sh 'docker build -t adittyapatil1818/spam-terminator-jenkins:server server'
 	}
 }
