@@ -28,8 +28,8 @@ stage('Server Tests') {
 
 stage('Build Images') {
 	steps {
-		sh 'docker build -t rakeshpotnuru/productivity-app:client-latest client'
-		sh 'docker build -t rakeshpotnuru/productivity-app:server-latest server'
+		sh 'docker build -t adittyapatil1818/spam-terminator-jenkins:client-latest client'
+		sh 'docker build -t adittyapatil1818/spam-terminator-jenkins:server-latest server'
 	}
 }
 
