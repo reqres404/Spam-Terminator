@@ -36,8 +36,8 @@ stage('Push Images to DockerHub') {
 	steps {
 		withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
 			sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
-			sh 'docker push adittyapatil1818/spam-terminator-jenkins:docker.io/dittyapatil1818/spam-terminator-jenkins:client'
-			sh 'docker push adittyapatil1818/spam-terminator-jenkins:docker.io/dittyapatil1818/spam-terminator-jenkins:server'
+sh 'docker push adittyapatil1818/spam-terminator-jenkins:client'
+sh 'docker push adittyapatil1818/spam-terminator-jenkins:server'
 		}
 	}
 }
