@@ -45,28 +45,33 @@ pipeline {
 				}
 			}
 		}
+    stages {
         stage('Free Ports') {
             steps {
                 sh '''
                     # Find and terminate processes using ports
-                    PORTS="3000,4000"  # Specify the ports you want to free
+                    PORT1=3000  # Specify the first port you want to free
+                    PORT2=4000  # Specify the second port you want to free
                     
-                    IFS=',' read -ra PORT_ARRAY <<< "$PORTS"
+                    PROCESS_ID1=$(lsof -t -i:$PORT1)
+                    PROCESS_ID2=$(lsof -t -i:$PORT2)
                     
-                    for PORT_NUMBER in "${PORT_ARRAY[@]}"; do
-                        PROCESS_ID=$(lsof -t -i:$PORT_NUMBER)
-                        
-                        if [ -n "$PROCESS_ID" ]; then
-                            echo "Terminating process with ID: $PROCESS_ID using port $PORT_NUMBER"
-                            kill -9 $PROCESS_ID
-                        else
-                            echo "No process found using port $PORT_NUMBER"
-                        fi
-                    done
+                    if [ -n "$PROCESS_ID1" ]; then
+                        echo "Terminating process with ID: $PROCESS_ID1 using port $PORT1"
+                        kill -9 $PROCESS_ID1
+                    else
+                        echo "No process found using port $PORT1"
+                    fi
+                    
+                    if [ -n "$PROCESS_ID2" ]; then
+                        echo "Terminating process with ID: $PROCESS_ID2 using port $PORT2"
+                        kill -9 $PROCESS_ID2
+                    else
+                        echo "No process found using port $PORT2"
+                    fi
                 '''
             }
         }
-
 				stage('Run Containers') {
 			steps {
 				sh 'docker run -d -p 3000:3000 adittyapatil1818/spam-terminator-jenkins:client'
