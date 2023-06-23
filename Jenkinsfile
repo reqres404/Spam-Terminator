@@ -45,20 +45,22 @@ pipeline {
 				}
 			}
 		}
-		        stage('Free Ports') {
+        stage('Free Ports') {
             steps {
                 sh '''
                     # Find and terminate processes using ports
-                    PORTS=(3000 4000)  # Specify the ports you want to free
+                    PORTS="3000,4000"  # Specify the ports you want to free
                     
-                    for PORT_NUMBER in "${PORTS[@]}"; do
-                        PROCESS_ID=$(lsof -t -i:${PORT_NUMBER})
+                    IFS=',' read -ra PORT_ARRAY <<< "$PORTS"
+                    
+                    for PORT_NUMBER in "${PORT_ARRAY[@]}"; do
+                        PROCESS_ID=$(lsof -t -i:$PORT_NUMBER)
                         
-                        if [ -n "${PROCESS_ID}" ]; then
-                            echo "Terminating process with ID: ${PROCESS_ID} using port ${PORT_NUMBER}"
-                            kill -9 ${PROCESS_ID}
+                        if [ -n "$PROCESS_ID" ]; then
+                            echo "Terminating process with ID: $PROCESS_ID using port $PORT_NUMBER"
+                            kill -9 $PROCESS_ID
                         else
-                            echo "No process found using port ${PORT_NUMBER}"
+                            echo "No process found using port $PORT_NUMBER"
                         fi
                     done
                 '''
