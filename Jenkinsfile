@@ -45,34 +45,32 @@ pipeline {
 				}
 			}
 		}
+		        stage('Free Ports') {
+            steps {
+                sh '''
+                    # Find and terminate processes using ports
+                    PORTS=(3000 4000)  # Specify the ports you want to free
+                    
+                    for PORT_NUMBER in "${PORTS[@]}"; do
+                        PROCESS_ID=$(lsof -t -i:${PORT_NUMBER})
+                        
+                        if [ -n "${PROCESS_ID}" ]; then
+                            echo "Terminating process with ID: ${PROCESS_ID} using port ${PORT_NUMBER}"
+                            kill -9 ${PROCESS_ID}
+                        else
+                            echo "No process found using port ${PORT_NUMBER}"
+                        fi
+                    done
+                '''
+            }
+        }
 
-		stage('Run Containers') {
+				stage('Run Containers') {
 			steps {
-				script {
-					def clientPort = 3000
-					def serverPort = 4000
-
-					stopContainersOnPort(clientPort)
-					stopContainersOnPort(serverPort)
-
-					// Placeholder step
-					sh 'echo "Running containers..."'
-				}
+				sh 'docker run -d -p 3000:3000 adittyapatil1818/spam-terminator-jenkins:client'
+				sh 'docker run -d -p 4000:4000 adittyapatil1818/spam-terminator-jenkins:server'
 			}
+		
 		}
 	}
 }
-
-def stopContainersOnPort(port) {
-    def command = "docker ps -q -f \"publish=0.0.0.0:${port}\""
-    def process = command.execute()
-    process.waitFor()
-    
-    if (process.exitValue() == 0) {
-        def containerIds = process.text.readLines()
-        containerIds.each { containerId ->
-            sh "docker stop ${containerId}"
-        }
-    }
-}
-
